@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # MineSweeper
 
 [![PyPI](https://img.shields.io/pypi/v/minesweeper.svg?maxAge=2592000)](https://github.com/duguyue100/minesweeper)
@@ -142,3 +143,6 @@ Please check related APIs from [msgame.py](minesweeper/msgame.py)
 
 Yuhuang Hu  
 Email: duguyue100@gmail.com
+=======
+Minesweeper game using Python and Pygame
+>>>>>>> ff61c2024738c4aeac0281e8093c85f58c7e31d1
