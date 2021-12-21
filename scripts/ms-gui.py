@@ -9,7 +9,8 @@ from __future__ import print_function
 import argparse
 import sys, time, pygame
 sys.path.insert(0, '../hex-py')
-import game_state
+import game_state, game_draw, game_input
+import constants 
 
 try:
     from PyQt4 import QtGui, QtCore
@@ -81,14 +82,28 @@ def game_loop(game):
     screen = pygame.display.set_mode(game.screen_size)
 
     while True:
-        # game_input.handle_events(pygame.event.get(), game)
-        # game_draw.draw_frame(screen, game)
+        game_input.handle_events(pygame.event.get(), game)
+        game_draw.draw_frame(screen, game)
         sys.stdout.flush()
         time.sleep(0.05) # cap at 20 fps
 
 def ms_hex_game_main():
     game = game_state.GameState()
     game_loop(game)
+
+    ms_game = MSGame(BOARD_WIDTH, BOARD_HEIGHT, NUM_MINES, PORT, IP_ADD)
+
+    ms_app = QApplication([])
+    ms_window = QWidget()
+    ms_window.setAutoFillBackground(True)
+    ms_window.setWindowTitle("Hex MineSweeper")
+    ms_layout = QGridLayout()
+    ms_window.setLayout(ms_layout)
+    
+    fun_wg = gui.ControlWidget()
+    grid_wg = gui.GameWidget(ms_game, fun_wg)
+    remote_thread = gui.RemoteControlThread()
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Mine Sweeper Minesweeper \
