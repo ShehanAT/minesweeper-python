@@ -1,5 +1,8 @@
 import hex_geometry
-
+import sys, time, pygame 
+sys.path.insert(0, '../scripts')
+import constants 
+import numpy as np 
 
 class GameState:
 
@@ -12,6 +15,7 @@ class GameState:
         self.board_width_tiles = 11
         self.board_height_tiles = 11
 
+        self.mine_hex_colour = (23, 45, 12)
         self.empty_hex_colour = (32, 32, 32)
         self.cursor_colour = (32, 128, 32)
         self.player_colour = [(255, 0, 0), (0, 0, 255)]
@@ -21,8 +25,20 @@ class GameState:
         self.moves = []
         self.solution = None
 
+        self.generate_maps()   
         self.generate_board()
 
+    # def generate_board(self):
+    #     points_up = True
+
+    #     self.hex_grid = hex_geometry.HexGrid(
+    #         self.board_width_tiles,
+    #         self.board_height_tiles,
+    #         self.hex_tile_size,
+    #         points_up)
+
+    #     for tile in self.hex_tiles():
+    #         tile.colour = self.empty_hex_colour
 
     def generate_board(self):
         points_up = True
@@ -32,10 +48,35 @@ class GameState:
             self.board_height_tiles,
             self.hex_tile_size,
             points_up)
-
+              
         for tile in self.hex_tiles():
-            tile.colour = self.empty_hex_colour
-
+            print(str(tile.grid_position[0])+ " - " + str(tile.grid_position[1]))
+            x = tile.grid_position[0]
+            y = tile.grid_position[1]
+            if self.mine_map[x][y] == 1:
+                tile.colour = self.empty_hex_colour
+            elif self.mine_map[x][y] == 0:
+                tile.colour = self.mine_hex_colour
+      
+    def generate_maps(self):
+        """
+        TODO: Creates mine_map and idx_list map variables in GameState object
+        """
+        self.mine_map = np.zeros((constants.BOARD_HEIGHT, constants.BOARD_WIDTH), dtype=np.uint8)
+        
+        self.idx_list = np.random.permutation(constants.BOARD_WIDTH * constants.BOARD_HEIGHT)
+        self.idx_list = self.idx_list[:constants.NUM_MINES]
+        
+        
+        for idx in self.idx_list:
+            idx_x = int(idx % constants.BOARD_WIDTH)
+            idx_y = int(idx / constants.BOARD_WIDTH)
+            
+            self.mine_map[idx_y, idx_x] = 1 
+            
+        self.info_map = np.ones((constants.BOARD_HEIGHT, constants.BOARD_WIDTH),
+                                dtype=np.uint8)*11 
+      
 
     def hex_tiles(self):
         return self.hex_grid.tiles.values()

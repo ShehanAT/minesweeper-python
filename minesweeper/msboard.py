@@ -52,8 +52,8 @@ class MSBoard(object):
             the map that defines the mine
             0 is empty, 1 is mine
         info_map : numpy.ndarray
-            the map that presents to gamer
-            0-8 is number of mines in srrounding.
+            the map that is presented to the player
+            0-8 is number of mines in surrounding.
             9 is flagged field.
             10 is questioned field.
             11 is undiscovered field.
