@@ -7,6 +7,9 @@ Email : duguyue100@gmail.com
 
 from __future__ import print_function
 import argparse
+import sys, time, pygame
+sys.path.insert(0, '../hex-py')
+import game_state
 
 try:
     from PyQt4 import QtGui, QtCore
@@ -73,6 +76,19 @@ def ms_game_main(board_width, board_height, num_mines, port, ip_add):
     ms_window.show()
     ms_app.exec_()
 
+def game_loop(game):
+    pygame.init()
+    screen = pygame.display.set_mode(game.screen_size)
+
+    while True:
+        # game_input.handle_events(pygame.event.get(), game)
+        # game_draw.draw_frame(screen, game)
+        sys.stdout.flush()
+        time.sleep(0.05) # cap at 20 fps
+
+def ms_hex_game_main():
+    game = game_state.GameState()
+    game_loop(game)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Mine Sweeper Minesweeper \
@@ -95,4 +111,5 @@ if __name__ == '__main__':
                         default="127.0.0.1",
                         help="The IP address for TCP connection.")
     args = parser.parse_args()
-    ms_game_main(**vars(args))
+    # ms_game_main(**vars(args))
+    ms_hex_game_main()

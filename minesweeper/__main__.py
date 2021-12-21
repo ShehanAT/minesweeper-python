@@ -333,7 +333,7 @@ class MapUnit(object):
 
 
 if __name__ == '__main__':
-
+    
     # Setup arguments for testing this code
 
     parser = \
@@ -369,7 +369,7 @@ if __name__ == '__main__':
         '--interactive',
         action='store_true',
         dest='interactive',
-        default=False,
+        default=True,
         help='Provide a ncurses interactive interface.',
         )
 
@@ -385,11 +385,26 @@ if __name__ == '__main__':
             import re
             stdscr = curses.initscr()
             stdscr.keypad(1)
-
+            print(m.ascii(numbers))
             while True:
+                pygame.init()
+                fpsClock = pygame.time.Clock()
+                
+                window = pygame.display.set_mode((640, 480), 1)
+                
+                while True:
+                    for event in pygame.event.get():
+                        if event.type == pygame.QUIT:
+                            pygame.quit()
+                            sys.exit()
+                    
+                    window.fill(pygame.Color("white"))
+                    pygame.display.update()
+                    
                 stdscr.addstr(1, 0, m.ascii(numbers=numbers))
                 c = stdscr.getstr()
                 stdscr.clear()
+                print("game clock: N/A")
                 if c == 'q':
                     break
                 elif c == 'N':
@@ -628,6 +643,7 @@ def paint( self, surface ):
         #Leave it running until exit
         while True:
             for event in pygame.event.get():
+                
                 if event.type == QUIT:
                     pygame.quit()
                     sys.exit()
