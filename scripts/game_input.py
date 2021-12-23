@@ -13,7 +13,7 @@ def on_key_down(event, game):
 def on_mouse_down(event, game, hexMSBoard):
     print("passing on_mouse_down()")
     if event.button == 1 and game.is_valid_move():
-        game.take_move()
+        game.take_move(hexMSBoard, game)
         game.show_tile_bottom(game, hexMSBoard)
     return
 

@@ -2,6 +2,14 @@ from __future__ import print_function
 import numpy as np 
 from collections import deque 
 
+try:
+    # Python 2
+    xrange
+except NameError:
+    # Python 3, xrange is now named range
+    xrange = range
+    
+
 class HexMSBoard(object):
     """"Define a Mine Sweeper Game Board."""
     
@@ -71,8 +79,6 @@ class HexMSBoard(object):
     def click_field(self, move_x, move_y):
         """Click one grid by given position."""
         field_status = self.info_map[move_y, move_x]
-
-        print("passing click_field()")
 
         # can only click blank region
         if field_status == 11:
@@ -178,3 +184,25 @@ class HexMSBoard(object):
             board_str += temp_line.expandtabs(4)+"\n"
 
         return board_str
+    
+    def update_board(self, gameState):
+        
+        for i in gameState.hex_tiles():
+            x = i.grid_position[0]
+            y = i.grid_position[1]
+            i.minesweeper_number = self.info_map[x][y]
+            
+            
+        current_row = 0
+        for i in gameState.hex_tiles():
+            x = i.grid_position[0]
+            y = i.grid_position[1]
+            if(x > current_row):
+                # print(x)
+                # print(current_row)
+                current_row = x 
+                print(str(i.minesweeper_number) + " " + "\n")
+                # i.text = 
+            else:
+                print(str(i.minesweeper_number) + " ", end="")
+            

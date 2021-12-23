@@ -86,6 +86,7 @@ class HexTile:
             self.width, self.height = flats_up_tile_size_px(size_px)
         self.points_up = points_up
         self.tile_status = 0
+        self.minesweeper_number = 0
 
 
     def __str__(self):

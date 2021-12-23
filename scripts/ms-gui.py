@@ -28,38 +28,6 @@ def game_loop(game):
     screen = pygame.display.set_mode(game.screen_size)
     
     ms_game = MSGame(constants.BOARD_WIDTH, constants.BOARD_HEIGHT, constants.NUM_MINES, constants.PORT, constants.IP_ADD)
-
-    ms_app = QApplication([])
-    ms_window = QWidget()
-    ms_window.setAutoFillBackground(True)
-    ms_window.setWindowTitle("Hex MineSweeper")
-    ms_layout = QGridLayout()
-    ms_window.setLayout(ms_layout)
-    
-    fun_wg = gui.ControlWidget()
-    grid_wg = gui.GameWidget(ms_game, fun_wg)
-    remote_thread = gui.RemoteControlThread()
-    
-    def update_grid_remote(move_msg):
-        """Update grid from remote control"""
-        if grid_wg.ms_game.game_status == 2:
-            grid_wg.ms_game.play_move_msg(str(move_msg))
-            grid_wg.update_grid()
-    
-    remote_thread.transfer.connect(update_grid_remote)
-    
-    def reset_button_state():
-        """Reset button state"""
-        grid_wg.reset_game()
-        
-    fun_wg.reset_button.clicked.connect(reset_button_state)
-    
-    ms_layout.addWidget(fun_wg, 0, 0)
-    ms_layout.addWidget(grid_wg, 1, 0)
-    remote_thread.control_start(grid_wg.ms_game)
-    
-    # ms_window.show()
-    # ms_app.exec_()
     
     hex_ms_board = game_board.HexMSBoard(BOARD_WIDTH, BOARD_HEIGHT, NUM_MINES)
     
