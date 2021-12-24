@@ -139,7 +139,7 @@ class MSGame(object):
         return move_des
 
     def play_move(self, move_type, move_x, move_y):
-        """Updat board by a given move.
+        """Update board by a given move.
 
         Parameters
         ----------

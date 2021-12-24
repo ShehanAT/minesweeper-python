@@ -13,6 +13,9 @@ import sys, time, pygame
 import game_state, game_draw, game_input, game_board 
 import constants
 from constants import BOARD_HEIGHT, NUM_MINES, BOARD_WIDTH
+from hex_geometry import Block, HexTileSprite
+
+
 
 try:
     from PyQt4 import QtGui, QtCore
@@ -31,8 +34,23 @@ def game_loop(game):
     
     hex_ms_board = game_board.HexMSBoard(BOARD_WIDTH, BOARD_HEIGHT, NUM_MINES)
     
+    # TILE_IMG_1 = pygame.image.load('c:\\Users\\sheha\\OneDrive\\Documents\\GitHub\\minesweeper-master\\scripts\\imgs\\one.png').convert_alpha()
+   
+    # sample_image = HexTileSprite(TILE_IMG_1, 100, 100)
+    # screen.blit(sample_image.image, sample_image.rect)
+    
+    
+    # all_sprites_list = pygame.sprite.Group()
+    # all_sprites_list.add(sample_image)
+    
+    # all_sprites_list.update()
+    
+    # all_sprites_list.draw(screen)
+    
+    pygame.display.flip()
+    
     while True:
-        game_input.handle_events(pygame.event.get(), game, hex_ms_board)
+        game_input.handle_events(pygame.event.get(), game, hex_ms_board, screen)
         game_draw.draw_frame(screen, game)
         sys.stdout.flush()
         time.sleep(0.05) # cap at 20 fps

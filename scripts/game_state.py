@@ -3,7 +3,7 @@ import sys, time, pygame
 sys.path.insert(0, '../scripts')
 import constants 
 import numpy as np 
-import game_board 
+import game_draw 
 
 class GameState:
 
@@ -51,7 +51,6 @@ class GameState:
             points_up)
               
         for tile in self.hex_tiles():
-            print(str(tile.grid_position[0])+ " - " + str(tile.grid_position[1]))
             x = tile.grid_position[0]
             y = tile.grid_position[1]
             if self.mine_map[x][y] == 1:
@@ -134,14 +133,15 @@ class GameState:
         return not tile in self.moves
 
 
-    def take_move(self, hexMSBoard, gameState, tile=None):
+    def take_move(self, hexMSBoard, gameState, surface, tile=None):
         if tile == None:
             tile = self.nearest_tile_to_mouse
-        tile.colour = self.player_colour[self.current_player]
+            tile.colour = self.player_colour[self.current_player]
         x = tile.grid_position[0]
         y = tile.grid_position[1]
         
         hexMSBoard.discover_region(x, y)
+        game_draw.draw_numbered_tile(surface, gameState, tile)
         print("take_move(): \n")
         print(hexMSBoard.info_map)
         
@@ -150,8 +150,6 @@ class GameState:
         self.solution = self.find_solution()
         hexMSBoard.update_board(gameState)
         
-
-
     def toggle_player_turn(self):
         if self.current_player == 0:
             self.current_player = 1
