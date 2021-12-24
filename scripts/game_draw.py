@@ -1,11 +1,38 @@
 import pygame
+import os 
+from os.path import join 
+# import minesweeper
+# from . import PACKAGE_IMGS_PATH
+from hex_geometry import HexTileSprite
+PACKAGE_PATH = os.path.dirname(os.path.abspath(__file__))
+PACKAGE_IMGS_PATH = os.path.join(PACKAGE_PATH, "imgs")
+from constants import BOARD_WIDTH, BOARD_HEIGHT 
 
+NUMBER_PATHS = [join(PACKAGE_IMGS_PATH, "one.png"),
+                join(PACKAGE_IMGS_PATH, "one.png"),
+                join(PACKAGE_IMGS_PATH, "two.png"),
+                join(PACKAGE_IMGS_PATH, "three.png"),
+                join(PACKAGE_IMGS_PATH, "four.png"),
+                join(PACKAGE_IMGS_PATH, "five.png"),
+                join(PACKAGE_IMGS_PATH, "six.png"),
+                join(PACKAGE_IMGS_PATH, "seven.png"),
+                join(PACKAGE_IMGS_PATH, "eight.png")
+                ]
 
 def draw_hex_tile(surface, game, tile):
     center_point = tile.center_point(game.board_position)
     corner_points = tile.corner_points(game.board_position)
     pygame.draw.polygon(surface, tile.colour, corner_points)
     pygame.draw.polygon(surface, (255, 255, 255), corner_points, 2) # border
+    
+    TILE_IMG_1 = pygame.image.load('imgs/one.png').convert_alpha()
+    
+    hex_tile_1 = HexTileSprite(TILE_IMG_1, BOARD_WIDTH, BOARD_HEIGHT)
+    all_hex_tiles = pygame.sprite.Group()
+    all_hex_tiles.add(hex_tile_1)
+    all_hex_tiles.draw(surface)
+    # Main task: use sprites instead of polygons to represent the minesweeper tiles and the 
+    # numbered tiles. Try using pygame.draw.sprite.LayeredDirty.draw() to replace pygame.draw.polygon()
 
     if tile == game.nearest_tile_to_mouse:
         if not game.is_game_over():
