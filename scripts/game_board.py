@@ -192,16 +192,3 @@ class HexMSBoard(object):
             y = i.grid_position[1]
             i.minesweeper_number = self.info_map[x][y]
             
-            
-        # current_row = 0
-        # for i in gameState.hex_tiles():
-        #     x = i.grid_position[0]
-        #     y = i.grid_position[1]
-        #     if(x > current_row):
-        #         # print(x)
-        #         # print(current_row)
-        #         current_row = x 
-        #         # i.text = 
-        #     else:
-        #         print(str(i.minesweeper_number) + " ", end="")
-            

@@ -102,13 +102,18 @@ class GameState:
         """
         x_coord = 0
         y_coord = 0 
-        for i in xrange(constants.BOARD_WIDTH):
-            x_coord += 100
-            for j in xrange(constants.BOARD_HEIGHT):
-                y_coord += 100
-                self.TILE_DRAW_COORDS[(i, j)] = [x_coord, y_coord]  
-            y_coord = 0   
-        print("passing create_tile_status_map()")   
+        for tile in self.hex_tiles():
+            tile_coords = tile.center_point(self.board_position)
+            x_coord = tile_coords[0]
+            y_coord = tile_coords[1]
+            
+            tile_grid_pos = tile.grid_position
+            tile_grid_pos_x = tile_grid_pos[0]
+            tile_grid_pos_y = tile_grid_pos[1]
+            self.TILE_DRAW_COORDS[(tile_grid_pos_x, tile_grid_pos_y)] = [x_coord, y_coord]
+
+        print(tile.center_point(self.board_position))
+              
             
     def hex_tiles(self):
         return self.hex_grid.tiles.values()
@@ -171,8 +176,6 @@ class GameState:
             hexMSBoard.discover_region(x, y)
             self.TILE_STATUS_COORDS[(x, y)] = 1
             game_draw.draw_numbered_tile(surface, gameState, tile)
-            print("take_move(): \n")
-            print(hexMSBoard.info_map)
         
         self.moves.append(tile)
         self.toggle_player_turn()

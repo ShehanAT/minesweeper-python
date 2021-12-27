@@ -40,7 +40,6 @@ def handle_events(events, game, hexMSBoard, surface):
     for event in events:
         if not event.type in event_handlers:
             continue
-        # event_handlers[event.type](event, game)
         if event.type == pygame.MOUSEBUTTONDOWN:
             return event_handlers[event.type](event, game, hexMSBoard, surface)
         else:

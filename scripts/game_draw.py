@@ -1,13 +1,10 @@
 import pygame
 import os 
 from os.path import join 
-# import minesweeper
-# from . import PACKAGE_IMGS_PATH
 from hex_geometry import HexTileSprite, Block 
 PACKAGE_PATH = os.path.dirname(os.path.abspath(__file__))
 PACKAGE_IMGS_PATH = os.path.join(PACKAGE_PATH, "imgs")
 from constants import BOARD_WIDTH, BOARD_HEIGHT 
-import game_state
 
 NUMBER_PATHS = [join(PACKAGE_IMGS_PATH, "one.png"),
                 join(PACKAGE_IMGS_PATH, "one.png"),
@@ -20,9 +17,6 @@ NUMBER_PATHS = [join(PACKAGE_IMGS_PATH, "one.png"),
                 join(PACKAGE_IMGS_PATH, "eight.png")
                 ]
 
-# pygame.init()
-# screen = pygame.display.set_mode((800, 600))
-
 # TILE_IMG_0 = pygame.image.load('c:\\Users\\sheha\\OneDrive\\Documents\\GitHub\\minesweeper-master\\scripts\\imgs\\zero.png').convert_alpha()
 
 # TILE_IMG_2 = pygame.image.load('c:\\Users\\sheha\\OneDrive\\Documents\\GitHub\\minesweeper-master\\scripts\\imgs\\two.png').convert_alpha()
@@ -33,28 +27,32 @@ NUMBER_PATHS = [join(PACKAGE_IMGS_PATH, "one.png"),
 # TILE_IMG_7 = pygame.image.load('c:\\Users\\sheha\\OneDrive\\Documents\\GitHub\\minesweeper-master\\scripts\\imgs\\seven.png').convert_alpha()
 # TILE_IMG_8 = pygame.image.load('c:\\Users\\sheha\\OneDrive\\Documents\\GitHub\\minesweeper-master\\scripts\\imgs\\eight.png').convert_alpha()
 
-# TILE_DRAW_COORDS = {
-#     (0, 0): [100, 100],
-#     (0, 1): [100, 200],
-#     (0, 2): [100, 300],
-#     (0, 3): [100, 400],
-#     (0, 4): [100, 500],
-# }
+def draw_hex_polygon(surface, game, tile):
+    """Used to draw hex polygon shapes on game board
 
-def draw_hex_tile(surface, game, tile):
+    Args:
+        surface ([type]): pygame window() instance
+        game ([type]): GameState() instance
+        tile ([type]): HexTile() instance 
+    """
     center_point = tile.center_point(game.board_position)
     corner_points = tile.corner_points(game.board_position)
     pygame.draw.polygon(surface, tile.colour, corner_points)
     pygame.draw.polygon(surface, (255, 255, 255), corner_points, 2) # border  
+
+    return center_point
+
+def draw_hex_tile(surface, game, tile):
+    center_point = draw_hex_polygon(surface, game, tile)
       
     if tile == game.nearest_tile_to_mouse:
         if not game.is_game_over():
             pygame.draw.circle(surface, game.cursor_colour, center_point, 12)
-            #draw_hex_neighbours(surface, game, tile, (255, 255, 255))
 
 def draw_numbered_tile(surface, game, tile):
     # Main task: use sprites instead of polygons to represent the minesweeper tiles and the 
     # numbered tiles. Try using pygame.draw.sprite.LayeredDirty.draw() to replace pygame.draw.polygon()
+    draw_hex_polygon(surface, game, tile)
     
     TILE_IMG_1 = pygame.image.load('c:\\Users\\sheha\\OneDrive\\Documents\\GitHub\\minesweeper-master\\scripts\\imgs\\one.png').convert_alpha()
     
@@ -67,11 +65,11 @@ def draw_numbered_tile(surface, game, tile):
     y_coord = game.TILE_DRAW_COORDS[(x_pos, y_pos)][1]
     
     
-    number_hex_tile = HexTileSprite(TILE_IMG_1, x_coord, y_coord, 0)
-    surface.fill((0, 0, 0))
+    number_hex_tile = HexTileSprite(TILE_IMG_1, x_coord, y_coord, 1)
+    # surface.fill((0, 0, 0))
     surface.blit(number_hex_tile.image, number_hex_tile.rect)
     
-    pygame.display.flip()
+    # pygame.display.flip()
     
     # for k, v in TILE_DRAW_COORDS.items():
     #     if(k == window_coords):
@@ -135,11 +133,6 @@ def draw_hex_right_border(surface, game, tile, colour):
 
 def draw_board(surface, game, number_tile=None):
     for tile in game.hex_tiles():
-        # if TILE_DRAW_COORDS[()]:
-            
-        # if number_tile != None:
-        #     draw_numbered_tile(surface, game, number_tile)
-        # else:
         x_pos = tile.grid_position[0]
         y_pos = tile.grid_position[1]
         if game.TILE_STATUS_COORDS[(x_pos, y_pos)] != 0:
@@ -170,10 +163,9 @@ def draw_end_zones(surface, game):
 def draw_frame(surface, game, number_tile=None):
     surface.fill(game.background_colour)
     draw_board(surface, game)
-    draw_end_zones(surface, game)
     if number_tile:
         draw_numbered_tile(surface, game, number_tile)
-        # draw_board(surface, game, tile)
-    # else:
-    #     draw_board(surface, game)
+        draw_end_zones(surface, game)
+    else:
+        draw_end_zones(surface, game)
     pygame.display.flip()
