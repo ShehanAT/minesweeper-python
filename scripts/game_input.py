@@ -15,7 +15,7 @@ def on_mouse_down(event, game, hexMSBoard, surface):
     if event.button == 1 and game.is_valid_move():
         game.take_move(hexMSBoard, game, surface)
         game.show_tile_bottom(game, hexMSBoard)
-    return
+    return ["click_event", game.nearest_tile_to_mouse]
 
 
 def on_mouse_up(event, game):
@@ -42,6 +42,6 @@ def handle_events(events, game, hexMSBoard, surface):
             continue
         # event_handlers[event.type](event, game)
         if event.type == pygame.MOUSEBUTTONDOWN:
-            event_handlers[event.type](event, game, hexMSBoard, surface)
+            return event_handlers[event.type](event, game, hexMSBoard, surface)
         else:
             event_handlers[event.type](event, game)

@@ -202,7 +202,7 @@ class HexTileSprite(pygame.sprite.Sprite):
     
     # Constructor. Pass in the color of the block,
     # and its x and y position
-    def __init__(self, image, x, y):
+    def __init__(self, image, x, y, layer):
        # Call the parent class (Sprite) constructor
        pygame.sprite.Sprite.__init__(self)
 
@@ -213,6 +213,7 @@ class HexTileSprite(pygame.sprite.Sprite):
        # Update the position of this object by setting the values of rect.x and rect.y
        self.rect = self.image.get_rect()
        self.rect.center = (x, y)
+       self._layer = layer 
     
     def draw(self, screen):
         screen.blit(self.image, self.rect)

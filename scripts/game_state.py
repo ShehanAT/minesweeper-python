@@ -5,7 +5,21 @@ import constants
 import numpy as np 
 import game_draw 
 
+
+try:
+    # Python 2
+    xrange
+except NameError:
+    # Python 3, xrange is now named range
+    xrange = range
+
+
 class GameState:
+
+    # Used to hold tile draw coordinate data
+    TILE_DRAW_COORDS = {}  
+    # Used to hold tile status in order to track current game status 
+    TILE_STATUS_COORDS = {}
 
     def __init__(self):
         self.background_colour = 0, 0, 0 # rgb 256
@@ -28,18 +42,8 @@ class GameState:
 
         self.generate_maps()   
         self.generate_board()
-
-    # def generate_board(self):
-    #     points_up = True
-
-    #     self.hex_grid = hex_geometry.HexGrid(
-    #         self.board_width_tiles,
-    #         self.board_height_tiles,
-    #         self.hex_tile_size,
-    #         points_up)
-
-    #     for tile in self.hex_tiles():
-    #         tile.colour = self.empty_hex_colour
+        self.create_tile_status_map()
+        self.create_tile_draw_map()
 
     def generate_board(self):
         points_up = True
@@ -56,11 +60,7 @@ class GameState:
             if self.mine_map[x][y] == 1:
                 tile.tile_status = 1
             tile.colour = self.empty_hex_colour 
-            #     tile.colour = self.empty_hex_colour
-            # elif self.mine_map[x][y] == 0:
-            #     tile.colour = self.mine_hex_colour
                 
-      
     def generate_maps(self):
         """
         TODO: Creates mine_map and idx_list map variables in GameState object
@@ -80,7 +80,36 @@ class GameState:
         self.info_map = np.ones((constants.BOARD_HEIGHT, constants.BOARD_WIDTH),
                                 dtype=np.uint8)*11 
       
-
+    def create_tile_status_map(self):
+        """
+        Used to create 2d array that will hold current tile status for all tiles in the game board 
+        """
+        x_coord = 0
+        y_coord = 0 
+        for i in xrange(constants.BOARD_WIDTH):
+            x_coord += 100
+            for j in xrange(constants.BOARD_HEIGHT):
+                y_coord += 100
+                self.TILE_STATUS_COORDS[(i, j)] = 0  
+            y_coord = 0   
+                      
+        
+    
+    def create_tile_draw_map(self):
+        """
+        Used to create 2d array that will hold current tile coordinate information, used to draw numbered tiles on
+        to the game board 
+        """
+        x_coord = 0
+        y_coord = 0 
+        for i in xrange(constants.BOARD_WIDTH):
+            x_coord += 100
+            for j in xrange(constants.BOARD_HEIGHT):
+                y_coord += 100
+                self.TILE_DRAW_COORDS[(i, j)] = [x_coord, y_coord]  
+            y_coord = 0   
+        print("passing create_tile_status_map()")   
+            
     def hex_tiles(self):
         return self.hex_grid.tiles.values()
 
@@ -133,17 +162,17 @@ class GameState:
         return not tile in self.moves
 
 
-    def take_move(self, hexMSBoard, gameState, surface, tile=None):
-        if tile == None:
-            tile = self.nearest_tile_to_mouse
-            tile.colour = self.player_colour[self.current_player]
-        x = tile.grid_position[0]
-        y = tile.grid_position[1]
-        
-        hexMSBoard.discover_region(x, y)
-        game_draw.draw_numbered_tile(surface, gameState, tile)
-        print("take_move(): \n")
-        print(hexMSBoard.info_map)
+    def take_move(self, hexMSBoard, gameState, surface):
+        if gameState.nearest_tile_to_mouse != False:
+            tile = gameState.nearest_tile_to_mouse 
+            x = tile.grid_position[0]
+            y = tile.grid_position[1]
+
+            hexMSBoard.discover_region(x, y)
+            self.TILE_STATUS_COORDS[(x, y)] = 1
+            game_draw.draw_numbered_tile(surface, gameState, tile)
+            print("take_move(): \n")
+            print(hexMSBoard.info_map)
         
         self.moves.append(tile)
         self.toggle_player_turn()
