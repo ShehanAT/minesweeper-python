@@ -66,29 +66,7 @@ def draw_numbered_tile(surface, game, tile):
     
     
     number_hex_tile = HexTileSprite(TILE_IMG_1, x_coord, y_coord, 1)
-    # surface.fill((0, 0, 0))
     surface.blit(number_hex_tile.image, number_hex_tile.rect)
-    
-    # pygame.display.flip()
-    
-    # for k, v in TILE_DRAW_COORDS.items():
-    #     if(k == window_coords):
-    #         x_coord = v[0]
-    #         y_coord = v[1]
-
-    #         TILE_IMG_1 = pygame.image.load('c:\\Users\\sheha\\OneDrive\\Documents\\GitHub\\minesweeper-master\\scripts\\imgs\\one.png').convert_alpha()
-    #         x_coord = 100
-    #         y_coord = 100
-    #         hex_tile_1 = HexTileSprite(TILE_IMG_1, x_coord, y_coord, 0)
-    #         surface.fill((0, 0, 0))
-    #         surface.blit(hex_tile_1.image, hex_tile_1.rect)
-            
-    #         pygame.display.flip()
-    
-  
-
-   
-
 
 def draw_hex_neighbours(surface, game, tile, colour):  
     width = 4
