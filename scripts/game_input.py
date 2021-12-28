@@ -1,5 +1,5 @@
 import sys, pygame
-
+import game_draw
 
 def on_quit(event, game):
     sys.exit()
@@ -16,6 +16,7 @@ def on_mouse_down(event, game, hexMSBoard, hexMSGame, surface):
         game.take_move(hexMSBoard, game, surface)
         game.show_tile_bottom(game, hexMSBoard)
         hexMSGame.play_move("click", game.nearest_tile_to_mouse.grid_position[0], game.nearest_tile_to_mouse.grid_position[1])
+        game_draw.update_grid()
     return ["click_event", game.nearest_tile_to_mouse]
 
 
