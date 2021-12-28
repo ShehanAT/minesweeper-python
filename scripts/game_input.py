@@ -10,11 +10,12 @@ def on_key_down(event, game):
         sys.exit()
 
 
-def on_mouse_down(event, game, hexMSBoard, surface):
+def on_mouse_down(event, game, hexMSBoard, hexMSGame, surface):
     print("passing on_mouse_down()")
     if event.button == 1 and game.is_valid_move():
         game.take_move(hexMSBoard, game, surface)
         game.show_tile_bottom(game, hexMSBoard)
+        hexMSGame.play_move("click", game.nearest_tile_to_mouse.grid_position[0], game.nearest_tile_to_mouse.grid_position[1])
     return ["click_event", game.nearest_tile_to_mouse]
 
 
@@ -36,11 +37,11 @@ event_handlers = {
 }
 
 
-def handle_events(events, game, hexMSBoard, surface):
+def handle_events(events, game, hexMSBoard, hexMSGame, surface):
     for event in events:
         if not event.type in event_handlers:
             continue
         if event.type == pygame.MOUSEBUTTONDOWN:
-            return event_handlers[event.type](event, game, hexMSBoard, surface)
-        else:
+            return event_handlers[event.type](event, game, hexMSBoard, hexMSGame, surface)
+        else:                                                                                                                                                                                                                                                              
             event_handlers[event.type](event, game)

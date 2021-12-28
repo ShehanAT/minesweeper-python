@@ -1,4 +1,4 @@
-
+from msboard import MSBoard
 
 class HexMSGame(object):
     
@@ -26,6 +26,29 @@ class HexMSGame(object):
         self.BUFFER_SIZE = 1024
 
         self.move_types = ["click", "flag", "unflag", "question"]
+        
+        # self.board = self.create_board(self.board_width, self.board_height,
+        #     self.num_mines)
+        self.init_new_game()
+        
+    def create_board(self, board_width, board_height, num_mines):
+        """Create a board by given parameters.
+
+        Parameters
+        ----------
+        board_width : int
+            the width of the board (> 0)
+        board_height : int
+            the height of the board (> 0)
+        num_mines : int
+            the number of mines, cannot be larger than
+            (board_width x board_height)
+
+        Returns
+        -------
+        board : MSBoard
+        """
+        return MSBoard(board_width, board_height, num_mines)
     
     def check_move(self, move_type, move_x, move_y):
         """Check if a move is valid.
@@ -61,6 +84,25 @@ class HexMSGame(object):
         self.num_moves += 1
 
         return move_des
+    
+    def init_new_game(self):
+        """Init a new game.
+
+        Parameters
+        ----------
+        board : MSBoard
+            define a new board.
+        game_status : int
+            define the game status:
+            0: lose, 1: win, 2: playing
+        moves : int
+            how many moves carried out.
+        """
+        self.board = self.create_board(self.board_width, self.board_height,
+                                       self.num_mines)
+        self.game_status = 2
+        self.num_moves = 0
+        self.move_history = []
 
     def play_move(self, move_type, move_x, move_y):
         """Update board by a given move.

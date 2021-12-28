@@ -10,7 +10,7 @@ import argparse
 import sys, time, pygame
 # from scripts.constants import BOARD_WIDTH, BOARD_HEIGHT, NUM_MINES, PORT, IP_ADD
 # sys.path.insert(0, '../hex-py')
-import game_state, game_draw, game_input, game_board 
+import game_state, game_draw, game_input, game_board, hex_ms_game
 import constants
 from constants import BOARD_HEIGHT, NUM_MINES, BOARD_WIDTH
 from hex_geometry import Block, HexTileSprite
@@ -33,11 +33,12 @@ def game_loop(game):
     ms_game = MSGame(constants.BOARD_WIDTH, constants.BOARD_HEIGHT, constants.NUM_MINES, constants.PORT, constants.IP_ADD)
     
     hex_ms_board = game_board.HexMSBoard(BOARD_WIDTH, BOARD_HEIGHT, NUM_MINES)
+    hex_game= hex_ms_game.HexMSGame(BOARD_WIDTH, BOARD_HEIGHT, NUM_MINES)
     
     pygame.display.flip()
     
     while True:
-        event_handler_result = game_input.handle_events(pygame.event.get(), game, hex_ms_board, screen)
+        event_handler_result = game_input.handle_events(pygame.event.get(), game, hex_ms_board, hex_game, screen)
         try:
             if event_handler_result[0] == "click_event":
                 game_draw.draw_frame(screen, game, event_handler_result[1])

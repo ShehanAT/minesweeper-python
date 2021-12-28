@@ -6,7 +6,7 @@ Email : duguyue100@gmail.com
 
 from __future__ import print_function
 import socket
-from minesweeper.msboard import MSBoard
+from scripts.msboard import MSBoard
 
 
 class MSGame(object):
