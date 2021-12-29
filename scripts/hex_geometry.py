@@ -1,6 +1,9 @@
 import math, itertools
 from functools import lru_cache
-import pygame 
+import pygame
+
+from minesweeper import PACKAGE_IMGS_PATH 
+import game_draw
 
 try:
     # Python 2
@@ -139,20 +142,23 @@ class HexTile:
         return distance_squared(self.center_point(offset), position)
 
 
-class HexGrid:
+class HexGrid(pygame.sprite.Sprite):
 
-    def __init__(self, width, height, tile_size, points_up):
+    def __init__(self, image, width, height, tile_size, points_up):
         self.width = width
         self.height = height
+        self.image = image
         self.tiles = {
-            (x,y): HexTile(x, y, tile_size, points_up)
+            # (x,y): HexTile(x, y, tile_size, points_up)
+            (x, y): HexTileSprite(image, x, y, tile_size, points_up)
             for (x,y) in itertools.product(range(width), range(height)) }
         for tile in self.tiles.values():
             self.populate_neighbours(tile)
 
-
-    def populate_neighbours(self, tile):
-        x, y = tile.grid_position
+    def populate_neighbours(self, tile):  
+          
+        x, y = tile.grid_position   
+         
         if x > 0:
             tile.neighbours.append(self.tiles[(x-1, y)])
         if x < self.width-1:
@@ -207,18 +213,28 @@ class HexTileSprite(pygame.sprite.Sprite):
     
     # Constructor. Pass in the color of the block,
     # and its x and y position
-    def __init__(self, image, x, y, layer):
+    def __init__(self, image, x, y, size_px, points_up):
        # Call the parent class (Sprite) constructor
        pygame.sprite.Sprite.__init__(self)
-
+       self.grid_position = (x, y)
+       self.neighbours = []
+       self.tile_status = 0
+       self.minesweeper_number = 0
+       if points_up:
+           self.width, self.height = points_up_tile_size_px(size_px)
+       else:
+           self.width, self.height = flats_up_tile_size_px(size_px)
+       self.points_up = points_up
+       
        # Create an image of the block, and fill it with a color.
        # This could also be an image loaded from the disk.
        self.image = image
        # Fetch the rectangle object that has the dimensions of the image
        # Update the position of this object by setting the values of rect.x and rect.y
+       
        self.rect = self.image.get_rect()
        self.rect.center = (x, y)
-       self._layer = layer 
+       self.init_ui()
        
     def init_ui(self):
         """Init the ui."""
@@ -234,38 +250,70 @@ class HexTileSprite(pygame.sprite.Sprite):
         ----------
         indicator : int
             A number where
-            0-8 is number of mines in srrounding.
+            0-8 is number of mines in surrounding.
             12 is a mine field.
         """
         if indicator in xrange(1, 9):
             self.id = indicator
-            self.setPixmap(QtGui.QPixmap(NUMBER_PATHS[indicator]).scaled(
-                    self.field_width, self.field_height))
+            self.image = pygame.image.load(game_draw.NUMBER_PATHS[indicator]).convert_alpha()
         elif indicator == 0:
             self.id == 0
-            self.setPixmap(QtGui.QPixmap(NUMBER_PATHS[0]).scaled(
-                    self.field_width, self.field_height))
+            self.image = pygame.image.load(game_draw.NUMBER_PATHS[0]).convert_alpha()
         elif indicator == 12:
             self.id = 12
-            self.setPixmap(QtGui.QPixmap(BOOM_PATH).scaled(self.field_width,
-                                                           self.field_height))
-            self.setStyleSheet("QLabel {background-color: black;}")
+            self.image = pygame.image.load(game_draw.BOOM_PATH).convert_alpha()
         elif indicator == 9:
             self.id = 9
-            self.setPixmap(QtGui.QPixmap(FLAG_PATH).scaled(self.field_width,
-                                                           self.field_height))
-            self.setStyleSheet("QLabel {background-color: #A3C1DA;}")
+            self.image = pygame.image.load(game_draw.FLAG_PATH).convert_alpha()
         elif indicator == 10:
             self.id = 10
-            self.setPixmap(QtGui.QPixmap(QUESTION_PATH).scaled(
-                    self.field_width, self.field_height))
-            self.setStyleSheet("QLabel {background-color: yellow;}")
+            self.image = pygame.image.load(game_draw.QUESTION_PATH).convert_alpha()
         elif indicator == 11:
             self.id = 11
-            self.setPixmap(QtGui.QPixmap(EMPTY_PATH).scaled(
-                    self.field_width*3, self.field_height*3))
-            self.setStyleSheet('QLabel {background-color: blue;}')
+            self.image = pygame.image.load(game_draw.EMPTY_PATH).convert_alpha()
 
+    def __str__(self):
+        return f'{self.grid_position}"'
+
+    def __repr__(self):
+        # Used to represent class objects in string format
+        return f'HexTile{self.grid_position}'
+
+    def center_point(self, offset=0):
+        if self.points_up:
+            return points_up_tile_center_point(
+                self.grid_position,
+                self.width,
+                self.height,
+                offset
+            )
+        else:
+            return flats_up_tile_center_point(
+                self.grid_position,
+                self.width,
+                self.height,
+                offset
+            )
+    
+    def corner_points(self, offset=0):
+        if self.points_up:
+            return points_up_tile_corner_points(
+                self.grid_position,
+                self.width,
+                self.height,
+                offset
+            )
+        else:
+            return flats_up_tile_corner_point(
+                self.grid_position,
+                self.width,
+                self.height,
+                offset
+            )
+            
+    def distance_squared(self, position, offset):
+        return distance_squared(self.center_point(offset), position)
+            
 class Block(pygame.sprite.Sprite):
     
     # Constructor. Pass in the color of the block,

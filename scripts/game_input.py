@@ -10,14 +10,13 @@ def on_key_down(event, game):
         sys.exit()
 
 
-def on_mouse_down(event, game, hexMSBoard, hexMSGame, surface):
-    print("passing on_mouse_down()")
-    if event.button == 1 and game.is_valid_move():
-        game.take_move(hexMSBoard, game, surface)
-        game.show_tile_bottom(game, hexMSBoard)
-        hexMSGame.play_move("click", game.nearest_tile_to_mouse.grid_position[0], game.nearest_tile_to_mouse.grid_position[1])
-        game_draw.update_grid()
-    return ["click_event", game.nearest_tile_to_mouse]
+def on_mouse_down(event, gameState, hexMSBoard, hexMSGame, surface):
+    if event.button == 1 and gameState.is_valid_move():
+        gameState.take_move(hexMSBoard, gameState, surface)
+        gameState.show_tile_bottom(gameState, hexMSBoard)
+        hexMSGame.play_move("click", gameState.nearest_tile_to_mouse.grid_position[0], gameState.nearest_tile_to_mouse.grid_position[1])
+        game_draw.update_grid(gameState, hexMSGame)
+    return ["click_event", gameState.nearest_tile_to_mouse]
 
 
 def on_mouse_up(event, game):

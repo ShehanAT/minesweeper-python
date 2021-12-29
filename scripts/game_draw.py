@@ -1,10 +1,20 @@
 import pygame
 import os 
 from os.path import join 
-from hex_geometry import HexTileSprite, Block 
+# from hex_geometry import HexTileSprite, Block 
+import hex_geometry
 PACKAGE_PATH = os.path.dirname(os.path.abspath(__file__))
 PACKAGE_IMGS_PATH = os.path.join(PACKAGE_PATH, "imgs")
 from constants import BOARD_WIDTH, BOARD_HEIGHT 
+
+try:
+    from PyQt4 import QtGui, QtCore
+    from PyQt4.QCore import QWidget, QLabel, QGridLayout, QHBoxLayout
+    from PyQt4.QCore import QPushButton, QLCDNumber
+except ImportError:
+    from PyQt5 import QtGui, QtCore
+    from PyQt5.QtWidgets import QWidget, QLabel, QGridLayout, QHBoxLayout
+    from PyQt5.QtWidgets import QPushButton, QLCDNumber
 
 try:
     # Python 2
@@ -184,7 +194,7 @@ def draw_numbered_tile(surface, game, tile):
     y_coord = game.TILE_DRAW_COORDS[(x_pos, y_pos)][1]
     
     
-    number_hex_tile = HexTileSprite(TILE_IMG_1, x_coord, y_coord, 1)
+    number_hex_tile = hex_geometry.HexTileSprite(TILE_IMG_1, x_coord, y_coord, 1, True)
     surface.blit(number_hex_tile.image, number_hex_tile.rect)
 
 def draw_hex_neighbours(surface, game, tile, colour):  
@@ -267,7 +277,11 @@ def draw_frame(surface, game, number_tile=None):
         draw_end_zones(surface, game)
     pygame.display.flip()
     
-def update_grid():
+def update_grid(gameState, hexMSGame):
+    
+    info_map = hexMSGame.get_info_map()
+    
     for i in xrange(BOARD_WIDTH):
         for j in xrange(BOARD_HEIGHT):
-            
+            tile = gameState.hex_grid.tiles.get((i, j))
+            tile.info_label(info_map[i, j])

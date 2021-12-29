@@ -5,7 +5,7 @@ Email : duguyue100@gmail.com
 """
 
 import os
-from minesweeper.msgame import MSGame
+from scripts.msgame import MSGame
 from scripts.msboard import MSBoard
 
 PACKAGE_PATH = os.path.dirname(os.path.abspath(__file__))
