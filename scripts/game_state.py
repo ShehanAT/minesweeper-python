@@ -2,6 +2,7 @@ import hex_geometry
 import sys, time, pygame
 
 from constants import WINDOW_HEIGHT, WINDOW_WIDTH
+from constants import BOARD_HEIGHT, BOARD_WIDTH
 
 # from minesweeper import PACKAGE_IMGS_PATH 
 sys.path.insert(0, '../scripts')
@@ -44,24 +45,51 @@ class GameState:
         self.moves = []
         self.solution = None
 
-        self.generate_maps()   
-        self.generate_board()
+        self.mine_map = np.zeros((BOARD_HEIGHT, BOARD_WIDTH),
+                                dtype=np.uint8)
+
+        self.generate_draw_board()
+        TILE_DRAW_COORDS = self.get_draw_tile_map()
+
+        self.generate_board(TILE_DRAW_COORDS)
+        
         self.create_tile_status_map()
         self.create_tile_draw_map()
+        
+        self.generate_maps()   
+        
+      
+    def generate_draw_board(self):
+        points_up = True 
+        pygame.init()
+        screen = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
 
-    def generate_board(self):
+        HEX_TILE_IMG = pygame.image.load(constants.PACKAGE_IMGS_PATH + "hex_tile.png").convert_alpha()
+        
+        self.draw_hex_grid = hex_geometry.DrawHexGrid(
+            HEX_TILE_IMG,
+            self.board_width_tiles,
+            self.board_height_tiles,
+            self.hex_tile_size,
+            points_up
+        )
+        
+
+    def generate_board(self, TILE_DRAW_COORDS):
         points_up = True
         pygame.init()
         screen = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
         
         HEX_TILE_IMG = pygame.image.load(constants.PACKAGE_IMGS_PATH + "hex_tile.png").convert_alpha()
+     
         
         self.hex_grid = hex_geometry.HexGrid(
             HEX_TILE_IMG,
             self.board_width_tiles,
             self.board_height_tiles,
             self.hex_tile_size,
-            points_up)
+            points_up,
+            TILE_DRAW_COORDS)
         # self.hex_grid = hex_geometry.HexGrid(
         #     HEX_TILE_IMG,
         #     constants.BOARD_WIDTH,
@@ -70,8 +98,10 @@ class GameState:
         # )
               
         for tile in self.hex_tiles():
-            x = tile.grid_position[0]
-            y = tile.grid_position[1]
+            # x = tile.grid_position[0]
+            # y = tile.grid_position[1]
+            x = tile.coord_position[0]
+            y = tile.coord_position[1]
             if self.mine_map[x][y] == 1:
                 tile.tile_status = 1
             tile.colour = self.empty_hex_colour 
@@ -109,6 +139,27 @@ class GameState:
             y_coord = 0   
                       
         
+    def create_draw_tile_map(self):
+        x_coord = 0
+        y_coord = 0 
+        for tile in self.draw_hex_tiles():
+            tile_coords = tile.center_point(self.board_position)
+            x_coord = tile_coords[0]
+            y_coord = tile_coords[1]
+            
+            tile_grid_pos = tile.grid_position
+            tile_grid_pos_x = tile_grid_pos[0]
+            tile_grid_pos_y = tile_grid_pos[1]
+            self.TILE_DRAW_COORDS[(tile_grid_pos_x, tile_grid_pos_y)] = [x_coord, y_coord]
+
+        print(tile.center_point(self.board_position))
+        
+    def get_draw_tile_map(self):
+        if self.TILE_DRAW_COORDS != {}:
+            return self.TILE_DRAW_COORDS 
+        else:
+            self.create_draw_tile_map()
+            return self.TILE_DRAW_COORDS
     
     def create_tile_draw_map(self):
         """
@@ -128,10 +179,19 @@ class GameState:
             self.TILE_DRAW_COORDS[(tile_grid_pos_x, tile_grid_pos_y)] = [x_coord, y_coord]
 
         print(tile.center_point(self.board_position))
-              
+    
+    def get_tile_draw_map(self):
+        if self.TILE_DRAW_COORDS != {}:
+            return self.TILE_DRAW_COORDS
+        else:
+            self.create_tile_draw_map()
+            return self.TILE_DRAW_COORDS
             
     def hex_tiles(self):
         return self.hex_grid.tiles.values()
+    
+    def draw_hex_tiles(self):
+        return self.draw_hex_grid.tiles.values()
 
 
     def nearest_hex_tile(self, pos):

@@ -194,7 +194,7 @@ def draw_numbered_tile(surface, game, tile):
     y_coord = game.TILE_DRAW_COORDS[(x_pos, y_pos)][1]
     
     
-    number_hex_tile = hex_geometry.HexTileSprite(TILE_IMG_1, x_coord, y_coord, 1, True)
+    number_hex_tile = hex_geometry.HexTileSprite(TILE_IMG_1, x_coord, y_coord, 1, True, x_pos, y_pos)
     surface.blit(number_hex_tile.image, number_hex_tile.rect)
 
 def draw_hex_neighbours(surface, game, tile, colour):  
@@ -240,8 +240,10 @@ def draw_hex_right_border(surface, game, tile, colour):
 
 def draw_board(surface, game, number_tile=None):
     for tile in game.hex_tiles():
-        x_pos = tile.grid_position[0]
-        y_pos = tile.grid_position[1]
+        # x_pos = tile.grid_position[0]
+        # y_pos = tile.grid_position[1]
+        x_pos = tile.coord_position[0]
+        y_pos = tile.coord_position[1]
         if game.TILE_STATUS_COORDS[(x_pos, y_pos)] != 0:
             draw_numbered_tile(surface, game, tile)
         else:
@@ -277,11 +279,11 @@ def draw_frame(surface, game, number_tile=None):
         draw_end_zones(surface, game)
     pygame.display.flip()
     
-def update_grid(gameState, hexMSGame):
+def update_grid(gameState, hexMSGame, surface):
     
     info_map = hexMSGame.get_info_map()
     
     for i in xrange(BOARD_WIDTH):
         for j in xrange(BOARD_HEIGHT):
             tile = gameState.hex_grid.tiles.get((i, j))
-            tile.info_label(info_map[i, j])
+            tile.info_label(info_map[i, j], surface, gameState)

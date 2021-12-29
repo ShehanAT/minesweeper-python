@@ -4,6 +4,9 @@ import pygame
 
 from minesweeper import PACKAGE_IMGS_PATH 
 import game_draw
+import game_state 
+import constants
+from constants import BOARD_WIDTH, BOARD_HEIGHT
 
 try:
     # Python 2
@@ -144,20 +147,33 @@ class HexTile:
 
 class HexGrid(pygame.sprite.Sprite):
 
-    def __init__(self, image, width, height, tile_size, points_up):
+    def __init__(self, image, width, height, tile_size, points_up, TILE_DRAW_COORDS):
         self.width = width
         self.height = height
         self.image = image
+        # TILE_DRAW_COORDS = game_state.GameState().get_tile_draw_map()        
         self.tiles = {
             # (x,y): HexTile(x, y, tile_size, points_up)
-            (x, y): HexTileSprite(image, x, y, tile_size, points_up)
+            # TODO: adjust constructor params to match new changes to HexTileSprite's constructor
+            (x, y): HexTileSprite(image, x, y, tile_size, points_up, TILE_DRAW_COORDS[(x, y)][0], TILE_DRAW_COORDS[(x, y)][1])
             for (x,y) in itertools.product(range(width), range(height)) }
+        
         for tile in self.tiles.values():
             self.populate_neighbours(tile)
 
+    @staticmethod
+    def createHexTiles(self, image, x, y, tile_size, points_up):
+        draw_tiles = {
+            # (x,y): HexTile(x, y, tile_size, points_up)
+            # TODO: adjust constructor params to match new changes to HexTileSprite's constructor
+            (x, y): HexTileSprite(image, x, y, tile_size, points_up)
+            for (x,y) in itertools.product(range(BOARD_WIDTH), range(BOARD_HEIGHT)) }
+        return draw_tiles 
+
     def populate_neighbours(self, tile):  
           
-        x, y = tile.grid_position   
+        # x, y = tile.grid_position   
+        x, y = tile.coord_position
          
         if x > 0:
             tile.neighbours.append(self.tiles[(x-1, y)])
@@ -171,8 +187,7 @@ class HexGrid(pygame.sprite.Sprite):
             tile.neighbours.append(self.tiles[(x, y+1)])
             if x > 0:
                 tile.neighbours.append(self.tiles[(x-1, y+1)])
-
-
+        
     def find_path(self, from_tile, to_tiles, filter, visited=None):
         if visited == None:
             visited = []
@@ -213,10 +228,11 @@ class HexTileSprite(pygame.sprite.Sprite):
     
     # Constructor. Pass in the color of the block,
     # and its x and y position
-    def __init__(self, image, x, y, size_px, points_up):
+    def __init__(self, image, x, y, size_px, points_up, grid_position_x=0, grid_position_y=0):
        # Call the parent class (Sprite) constructor
        pygame.sprite.Sprite.__init__(self)
-       self.grid_position = (x, y)
+       self.grid_position = (grid_position_x, grid_position_y)
+       self.coord_position = (x, y)
        self.neighbours = []
        self.tile_status = 0
        self.minesweeper_number = 0
@@ -243,7 +259,7 @@ class HexTileSprite(pygame.sprite.Sprite):
     def draw(self, screen):
         screen.blit(self.image, self.rect)
         
-    def info_label(self, indicator):
+    def info_label(self, indicator, screen, gameState):
         """Set info label by given settings.
 
         Parameters
@@ -253,24 +269,43 @@ class HexTileSprite(pygame.sprite.Sprite):
             0-8 is number of mines in surrounding.
             12 is a mine field.
         """
+        
+        x_pos = self.grid_position[0]
+        y_pos = self.grid_position[1]
+        
+        x_coord = gameState.TILE_DRAW_COORDS[(x_pos, y_pos)][0]
+        y_coord = gameState.TILE_DRAW_COORDS[(x_pos, y_pos)][1]
+                
         if indicator in xrange(1, 9):
             self.id = indicator
             self.image = pygame.image.load(game_draw.NUMBER_PATHS[indicator]).convert_alpha()
+            new_image = pygame.image.load(game_draw.NUMBER_PATHS[indicator]).convert_alpha()
+
         elif indicator == 0:
             self.id == 0
             self.image = pygame.image.load(game_draw.NUMBER_PATHS[0]).convert_alpha()
+            new_image = pygame.image.load(game_draw.NUMBER_PATHS[0]).convert_alpha()
         elif indicator == 12:
             self.id = 12
             self.image = pygame.image.load(game_draw.BOOM_PATH).convert_alpha()
+            new_image = pygame.image.load(game_draw.BOOM_PATH).convert_alpha()
         elif indicator == 9:
             self.id = 9
             self.image = pygame.image.load(game_draw.FLAG_PATH).convert_alpha()
+            new_image = pygame.image.load(game_draw.FLAG_PATH).convert_alpha()
         elif indicator == 10:
             self.id = 10
             self.image = pygame.image.load(game_draw.QUESTION_PATH).convert_alpha()
+            new_image = pygame.image.load(game_draw.QUESTION_PATH).convert_alpha()
         elif indicator == 11:
             self.id = 11
             self.image = pygame.image.load(game_draw.EMPTY_PATH).convert_alpha()
+            new_image = pygame.image.load(game_draw.EMPTY_PATH).convert_alpha()
+
+        new_tile = HexTileSprite(new_image, x_coord, y_coord, 1, True, x_pos, y_pos)
+
+        screen.blit(new_tile.image, new_tile.rect)
+
 
     def __str__(self):
         return f'{self.grid_position}"'
@@ -330,3 +365,167 @@ class Block(pygame.sprite.Sprite):
        # Fetch the rectangle object that has the dimensions of the image
        # Update the position of this object by setting the values of rect.x and rect.y
        self.rect = self.image.get_rect()
+       
+class DrawHexTileSprite(pygame.sprite.Sprite):
+    
+    # Constructor. Pass in the color of the block,
+    # and its x and y position
+    def __init__(self, image, x, y, size_px, points_up):
+       # Call the parent class (Sprite) constructor
+       pygame.sprite.Sprite.__init__(self)
+       self.grid_position = (x, y)
+       self.neighbours = []
+       self.tile_status = 0
+       self.minesweeper_number = 0
+       if points_up:
+           self.width, self.height = points_up_tile_size_px(size_px)
+       else:
+           self.width, self.height = flats_up_tile_size_px(size_px)
+       self.points_up = points_up
+       
+       # Create an image of the block, and fill it with a color.
+       # This could also be an image loaded from the disk.
+       self.image = image
+       # Fetch the rectangle object that has the dimensions of the image
+       # Update the position of this object by setting the values of rect.x and rect.y
+       
+       self.rect = self.image.get_rect()
+       self.rect.center = (x, y)
+       self.init_ui()
+       
+    def init_ui(self):
+        """Init the ui."""
+        self.id = 11
+    
+    def draw(self, screen):
+        screen.blit(self.image, self.rect)
+        
+    def info_label(self, indicator):
+        """Set info label by given settings.
+        Parameters
+        ----------
+        indicator : int
+            A number where
+            0-8 is number of mines in surrounding.
+            12 is a mine field.
+        """
+        if indicator in xrange(1, 9):
+            self.id = indicator
+            self.image = pygame.image.load(game_draw.NUMBER_PATHS[indicator]).convert_alpha()
+        elif indicator == 0:
+            self.id == 0
+            self.image = pygame.image.load(game_draw.NUMBER_PATHS[0]).convert_alpha()
+        elif indicator == 12:
+            self.id = 12
+            self.image = pygame.image.load(game_draw.BOOM_PATH).convert_alpha()
+        elif indicator == 9:
+            self.id = 9
+            self.image = pygame.image.load(game_draw.FLAG_PATH).convert_alpha()
+        elif indicator == 10:
+            self.id = 10
+            self.image = pygame.image.load(game_draw.QUESTION_PATH).convert_alpha()
+        elif indicator == 11:
+            self.id = 11
+            self.image = pygame.image.load(game_draw.EMPTY_PATH).convert_alpha()
+
+    def __str__(self):
+        return f'{self.grid_position}"'
+
+    def __repr__(self):
+        # Used to represent class objects in string format
+        return f'HexTile{self.grid_position}'
+
+    def center_point(self, offset=0):
+        if self.points_up:
+            return points_up_tile_center_point(
+                self.grid_position,
+                self.width,
+                self.height,
+                offset
+            )
+        else:
+            return flats_up_tile_center_point(
+                self.grid_position,
+                self.width,
+                self.height,
+                offset
+            )
+
+class DrawHexGrid(pygame.sprite.Sprite):
+    
+    def __init__(self, image, width, height, tile_size, points_up):
+        self.width = width
+        self.height = height
+        self.image = image
+        # TILE_DRAW_COORDS = game_state.GameState().get_tile_draw_map()        
+        self.tiles = {
+            # (x,y): HexTile(x, y, tile_size, points_up)
+            # TODO: adjust constructor params to match new changes to HexTileSprite's constructor
+            (x, y): DrawHexTileSprite(image, x, y, tile_size, points_up)
+            for (x,y) in itertools.product(range(width), range(height)) }
+        
+        for tile in self.tiles.values():
+            self.populate_neighbours(tile)
+
+    @staticmethod
+    def createHexTiles(self, image, x, y, tile_size, points_up):
+        draw_tiles = {
+            # (x,y): HexTile(x, y, tile_size, points_up)
+            # TODO: adjust constructor params to match new changes to HexTileSprite's constructor
+            (x, y): HexTileSprite(image, x, y, tile_size, points_up)
+            for (x,y) in itertools.product(range(BOARD_WIDTH), range(BOARD_HEIGHT)) }
+        return draw_tiles 
+
+    def populate_neighbours(self, tile):  
+          
+        x, y = tile.grid_position   
+         
+        if x > 0:
+            tile.neighbours.append(self.tiles[(x-1, y)])
+        if x < self.width-1:
+            tile.neighbours.append(self.tiles[(x+1, y)])
+        if y > 0:
+            tile.neighbours.append(self.tiles[(x, y-1)])
+            if x < self.width-1:
+                tile.neighbours.append(self.tiles[(x+1, y-1)])
+        if y < self.height-1:
+            tile.neighbours.append(self.tiles[(x, y+1)])
+            if x > 0:
+                tile.neighbours.append(self.tiles[(x-1, y+1)])
+        
+    def find_path(self, from_tile, to_tiles, filter, visited=None):
+        if visited == None:
+            visited = []
+
+        if not filter(from_tile) or from_tile in visited:
+            return None
+
+        if from_tile in to_tiles:
+            return [from_tile]
+
+        visited.append(from_tile)
+
+        for neighbour in from_tile.neighbours:
+            result = self.find_path(neighbour, to_tiles, filter, visited)
+            if result != None:
+                result.append(from_tile)
+                return result
+
+        return None
+
+
+    def top_row(self):
+        return [self.tiles[(x, 0)] for x in range(self.width)]
+
+
+    def bottom_row(self):
+        return [self.tiles[(x, self.height-1)] for x in range(self.width)]
+
+
+    def left_column(self):
+        return [self.tiles[(0, y)] for y in range(self.height)]
+
+
+    def right_column(self):
+        return [self.tiles[(self.width-1, y)] for y in range(self.height)]
+    
