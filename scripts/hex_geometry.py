@@ -317,14 +317,16 @@ class HexTileSprite(pygame.sprite.Sprite):
     def center_point(self, offset=0):
         if self.points_up:
             return points_up_tile_center_point(
-                self.grid_position,
+                # self.grid_position,
+                self.coord_position,
                 self.width,
                 self.height,
                 offset
             )
         else:
             return flats_up_tile_center_point(
-                self.grid_position,
+                # self.grid_position,
+                self.coord_position,
                 self.width,
                 self.height,
                 offset
@@ -333,14 +335,16 @@ class HexTileSprite(pygame.sprite.Sprite):
     def corner_points(self, offset=0):
         if self.points_up:
             return points_up_tile_corner_points(
-                self.grid_position,
+                # self.grid_position,
+                self.coord_position,
                 self.width,
                 self.height,
                 offset
             )
         else:
             return flats_up_tile_corner_point(
-                self.grid_position,
+                # self.grid_position,
+                self.coord_position,
                 self.width,
                 self.height,
                 offset
