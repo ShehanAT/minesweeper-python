@@ -14,7 +14,7 @@ def on_mouse_down(event, gameState, hexMSBoard, hexMSGame, surface):
     if event.button == 1 and gameState.is_valid_move():
         gameState.take_move(hexMSBoard, gameState, surface)
         gameState.show_tile_bottom(gameState, hexMSBoard)
-        hexMSGame.play_move("click", gameState.nearest_tile_to_mouse.grid_position[0], gameState.nearest_tile_to_mouse.grid_position[1])
+        hexMSGame.play_move("click", gameState.nearest_tile_to_mouse.coord_position[0], gameState.nearest_tile_to_mouse.coord_position[1])
         game_draw.update_grid(gameState, hexMSGame, surface)
     return ["click_event", gameState.nearest_tile_to_mouse]
 

@@ -245,8 +245,8 @@ class GameState:
     def take_move(self, hexMSBoard, gameState, surface):
         if gameState.nearest_tile_to_mouse != False:
             tile = gameState.nearest_tile_to_mouse 
-            x = tile.grid_position[0]
-            y = tile.grid_position[1]
+            x = tile.coord_position[0]
+            y = tile.coord_position[1]
 
             hexMSBoard.discover_region(x, y)
             self.TILE_STATUS_COORDS[(x, y)] = 1

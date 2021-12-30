@@ -188,7 +188,7 @@ class HexMSBoard(object):
     def update_board(self, gameState):
         
         for i in gameState.hex_tiles():
-            x = i.grid_position[0]
-            y = i.grid_position[1]
+            x = i.coord_position[0]
+            y = i.coord_position[1]
             i.minesweeper_number = self.info_map[x][y]
             
