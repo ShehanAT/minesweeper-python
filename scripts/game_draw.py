@@ -308,9 +308,7 @@ def draw_frame(surface, game, hex_ms_game, number_tile=None):
     pygame.display.flip()
     
 def update_grid(gameState, hexMSGame, surface):
-    
     info_map = hexMSGame.get_info_map()
-    hexMSGame2 = hexMSGame 
     for i in xrange(BOARD_WIDTH):
         for j in xrange(BOARD_HEIGHT):
             tile = gameState.hex_grid.tiles.get((i, j))
