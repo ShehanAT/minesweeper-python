@@ -41,12 +41,12 @@ def game_loop(game):
         event_handler_result = game_input.handle_events(pygame.event.get(), game, hex_ms_board, hex_game, screen)
         try:
             if event_handler_result[0] == "click_event":
-                game_draw.draw_frame(screen, game, event_handler_result[1])
+                game_draw.draw_frame(screen, game, hex_ms_board, event_handler_result[1])
                 raise ValueError
         except ValueError:
-            game_draw.draw_frame(screen, game)
+            game_draw.draw_frame(screen, game, hex_ms_board)
         except TypeError:
-            game_draw.draw_frame(screen, game)
+            game_draw.draw_frame(screen, game, hex_ms_board)
             
         sys.stdout.flush()
         time.sleep(0.05) # cap at 20 fps

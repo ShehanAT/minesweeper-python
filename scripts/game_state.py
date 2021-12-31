@@ -250,7 +250,7 @@ class GameState:
 
             hexMSBoard.discover_region(x, y)
             self.TILE_STATUS_COORDS[(x, y)] = 1
-            game_draw.draw_numbered_tile(surface, gameState, tile)
+            game_draw.draw_tile(surface, gameState, tile)
         
         self.moves.append(tile)
         self.toggle_player_turn()

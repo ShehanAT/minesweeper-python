@@ -269,9 +269,8 @@ class HexTileSprite(pygame.sprite.Sprite):
             0-8 is number of mines in surrounding.
             12 is a mine field.
         """
-        
-        x_pos = self.grid_position[0]
-        y_pos = self.grid_position[1]
+        x_pos = self.coord_position[0]
+        y_pos = self.coord_position[1]
         
         x_coord = gameState.TILE_DRAW_COORDS[(x_pos, y_pos)][0]
         y_coord = gameState.TILE_DRAW_COORDS[(x_pos, y_pos)][1]
@@ -302,9 +301,15 @@ class HexTileSprite(pygame.sprite.Sprite):
             self.image = pygame.image.load(game_draw.EMPTY_PATH).convert_alpha()
             new_image = pygame.image.load(game_draw.EMPTY_PATH).convert_alpha()
 
-        new_tile = HexTileSprite(new_image, x_coord, y_coord, 1, True, x_pos, y_pos)
+        # test_image = pygame.image.load('c:\\Users\\sheha\\OneDrive\\Documents\\GitHub\\minesweeper-master\\scripts\\imgs\\three.png').convert_alpha()
+        # test_tile = HexTileSprite(test_image, 100, 100, 3, True, 100, 100)
+        # test_tile.image = test_image 
+        # test_tile.rect = test_image.get_rect()
+        # screen.blit does work, needs to continually render updated game state 
+        # screen.blit(test_tile.image, test_tile.rect)
+        # new_tile = HexTileSprite(new_image, x_coord, y_coord, 1, True, x_coord, y_coord)
 
-        screen.blit(new_tile.image, new_tile.rect)
+        screen.blit(self.image, self.rect)
 
 
     def __str__(self):
@@ -404,33 +409,33 @@ class DrawHexTileSprite(pygame.sprite.Sprite):
     def draw(self, screen):
         screen.blit(self.image, self.rect)
         
-    def info_label(self, indicator):
-        """Set info label by given settings.
-        Parameters
-        ----------
-        indicator : int
-            A number where
-            0-8 is number of mines in surrounding.
-            12 is a mine field.
-        """
-        if indicator in xrange(1, 9):
-            self.id = indicator
-            self.image = pygame.image.load(game_draw.NUMBER_PATHS[indicator]).convert_alpha()
-        elif indicator == 0:
-            self.id == 0
-            self.image = pygame.image.load(game_draw.NUMBER_PATHS[0]).convert_alpha()
-        elif indicator == 12:
-            self.id = 12
-            self.image = pygame.image.load(game_draw.BOOM_PATH).convert_alpha()
-        elif indicator == 9:
-            self.id = 9
-            self.image = pygame.image.load(game_draw.FLAG_PATH).convert_alpha()
-        elif indicator == 10:
-            self.id = 10
-            self.image = pygame.image.load(game_draw.QUESTION_PATH).convert_alpha()
-        elif indicator == 11:
-            self.id = 11
-            self.image = pygame.image.load(game_draw.EMPTY_PATH).convert_alpha()
+    # def info_label(self, indicator):
+    #     """Set info label by given settings.
+    #     Parameters
+    #     ----------
+    #     indicator : int
+    #         A number where
+    #         0-8 is number of mines in surrounding.
+    #         12 is a mine field.
+    #     """
+    #     if indicator in xrange(1, 9):
+    #         self.id = indicator
+    #         self.image = pygame.image.load(game_draw.NUMBER_PATHS[indicator]).convert_alpha()
+    #     elif indicator == 0:
+    #         self.id == 0
+    #         self.image = pygame.image.load(game_draw.NUMBER_PATHS[0]).convert_alpha()
+    #     elif indicator == 12:
+    #         self.id = 12
+    #         self.image = pygame.image.load(game_draw.BOOM_PATH).convert_alpha()
+    #     elif indicator == 9:
+    #         self.id = 9
+    #         self.image = pygame.image.load(game_draw.FLAG_PATH).convert_alpha()
+    #     elif indicator == 10:
+    #         self.id = 10
+    #         self.image = pygame.image.load(game_draw.QUESTION_PATH).convert_alpha()
+    #     elif indicator == 11:
+    #         self.id = 11
+    #         self.image = pygame.image.load(game_draw.EMPTY_PATH).convert_alpha()
 
     def __str__(self):
         return f'{self.grid_position}"'

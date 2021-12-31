@@ -27,8 +27,8 @@ class HexMSGame(object):
 
         self.move_types = ["click", "flag", "unflag", "question"]
         
-        # self.board = self.create_board(self.board_width, self.board_height,
-        #     self.num_mines)
+        self.board = self.create_board(self.board_width, self.board_height,
+            self.num_mines)
         self.init_new_game()
         
     def create_board(self, board_width, board_height, num_mines):

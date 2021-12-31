@@ -74,7 +74,7 @@ class HexMSBoard(object):
             self.mine_map[idx_y, idx_x] = 1
 
         self.info_map = np.ones((self.board_height, self.board_width),
-                                dtype=np.uint8)
+                                dtype=np.uint8)*11
 
     def click_field(self, move_x, move_y):
         """Click one grid by given position."""
@@ -120,6 +120,9 @@ class HexMSBoard(object):
                                    top_left[1]:bottom_right[1]+1].sum()
 
         return top_left, bottom_right, region_sum
+    
+    def get_info_map(self):
+        return self.info_map
 
     def flag_field(self, move_x, move_y):
         """Flag a grid by given position."""
