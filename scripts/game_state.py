@@ -78,11 +78,9 @@ class GameState:
     def generate_board(self, TILE_DRAW_COORDS):
         points_up = True
         pygame.init()
-        screen = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
-        
+                
         HEX_TILE_IMG = pygame.image.load(constants.PACKAGE_IMGS_PATH + "hex_tile.png").convert_alpha()
      
-        
         self.hex_grid = hex_geometry.HexGrid(
             HEX_TILE_IMG,
             self.board_width_tiles,
@@ -90,16 +88,8 @@ class GameState:
             self.hex_tile_size,
             points_up,
             TILE_DRAW_COORDS)
-        # self.hex_grid = hex_geometry.HexGrid(
-        #     HEX_TILE_IMG,
-        #     constants.BOARD_WIDTH,
-        #     constants.BOARD_HEIGHT,
-        #     0
-        # )
               
         for tile in self.hex_tiles():
-            # x = tile.grid_position[0]
-            # y = tile.grid_position[1]
             x = tile.coord_position[0]
             y = tile.coord_position[1]
             if self.mine_map[x][y] == 1:

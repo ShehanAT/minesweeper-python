@@ -147,6 +147,10 @@ class MSBoard(object):
         num_undiscovered = np.sum(self.info_map == 11)
         num_questioned = np.sum(self.info_map == 10)
 
+        print("num_mines: " + str(num_mines))
+        print("num_undiscovered: " + str(num_undiscovered))
+        print("num_question: " + str(num_questioned))
+        
         if num_mines > 0:
             return 0
         elif np.array_equal(self.info_map == 9, self.mine_map):

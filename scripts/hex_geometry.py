@@ -4,8 +4,6 @@ import pygame
 
 from minesweeper import PACKAGE_IMGS_PATH 
 import game_draw
-import game_state 
-import constants
 from constants import BOARD_WIDTH, BOARD_HEIGHT
 
 try:
@@ -88,70 +86,12 @@ def flats_up_tile_corner_points(grid_position, width, height, offset):
     position_px = flats_up_tile_center_point(grid_position, width, height, offset)
     return [flats_up_tile_corner_point(radius, i, position_px) for i in range(6)]
 
-
-class HexTile:
-
-    def __init__(self, grid_x, grid_y, size_px, points_up):
-        self.grid_position = (grid_x, grid_y)
-        self.neighbours = []
-        if points_up:
-            self.width, self.height = points_up_tile_size_px(size_px)
-        else:
-            self.width, self.height = flats_up_tile_size_px(size_px)
-        self.points_up = points_up
-        self.tile_status = 0
-        self.minesweeper_number = 0
-
-
-    def __str__(self):
-        return f'{self.grid_position}'
-
-
-    def __repr__(self):
-        return f'HexTile{self.grid_position}'
-
-
-    def center_point(self, offset=0):
-        if self.points_up:
-            return points_up_tile_center_point(
-                self.grid_position,
-                self.width,
-                self.height,
-                offset)
-        else:
-            return flats_up_tile_center_point(
-                self.grid_position,
-                self.width,
-                self.height,
-                offset)
-
-
-    def corner_points(self, offset=0):
-        if self.points_up:
-            return points_up_tile_corner_points(
-                self.grid_position,
-                self.width,
-                self.height,
-                offset)
-        else:
-            return flats_up_tile_corner_points(
-                self.grid_position,
-                self.width,
-                self.height,
-                offset)
-
-
-    def distance_squared(self, position, offset):
-        return distance_squared(self.center_point(offset), position)
-
-
 class HexGrid(pygame.sprite.Sprite):
 
     def __init__(self, image, width, height, tile_size, points_up, TILE_DRAW_COORDS):
         self.width = width
         self.height = height
         self.image = image
-        # TILE_DRAW_COORDS = game_state.GameState().get_tile_draw_map()        
         self.tiles = {
             # (x,y): HexTile(x, y, tile_size, points_up)
             # TODO: adjust constructor params to match new changes to HexTileSprite's constructor
@@ -489,4 +429,14 @@ class DrawHexGrid(pygame.sprite.Sprite):
 
     def right_column(self):
         return [self.tiles[(self.width-1, y)] for y in range(self.height)]
+    
+
+class GameLabel(pygame.sprite.Sprite):
+    
+    def __init__(self, image, x, y, size_px):
+        pygame.sprite.Sprite.__init__(self)
+        self.grid_position = (x, y)
+        self.image = image 
+        self.rect = self.image.get_rect()
+        self.rect.center = (x, y)
     

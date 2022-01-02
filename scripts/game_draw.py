@@ -35,7 +35,7 @@ NUMBER_PATHS = [join(PACKAGE_IMGS_PATH, "one.png"),
                 join(PACKAGE_IMGS_PATH, "seven.png"),
                 join(PACKAGE_IMGS_PATH, "eight.png")
                 ]
-
+GAME_OVER_IMG_PATH = join(PACKAGE_IMGS_PATH, "game_over.png")
 FLAG_PATH = join(PACKAGE_IMGS_PATH, "flag.png")
 QUESTION_PATH = join(PACKAGE_IMGS_PATH, "question.png")
 BOOM_PATH = join(PACKAGE_IMGS_PATH, "boom.png")
@@ -116,7 +116,6 @@ def draw_tile(surface, game, tile_indicator, x_index, y_index):
     game_tile.image = pygame.transform.scale(game_tile.image, (30, 30))
     game_tile.rect.x = game_tile.grid_position[0] - 15 
     game_tile.rect.y = game_tile.grid_position[1] - 15
-    # game_tile.rect.center = game_tile.center_point()
 
     surface.blit(game_tile.image, game_tile.rect)  
   
@@ -162,9 +161,15 @@ def draw_hex_right_border(surface, game, tile, colour):
 
 
 def draw_board(surface, game, hex_ms_board):
+    game_over = False 
     if hex_ms_board != None:
         for x_index, tile_row in enumerate(hex_ms_board.get_info_map()):
             for y_index, tile in enumerate(tile_row):
+                if tile == 12:
+                    # User has clicked a bomb tile, end the game 
+                    draw_tile(surface, game, tile, x_index, y_index)
+                    game_over = True 
+                    return game_over
                 draw_tile(surface, game, tile, x_index, y_index)
 
 def draw_end_zones(surface, game):
@@ -186,7 +191,9 @@ def draw_end_zones(surface, game):
 
 def draw_frame(surface, game, hex_ms_game, number_tile=None):
     surface.fill(game.background_colour)
-    draw_board(surface, game, hex_ms_game)
+    game_over = draw_board(surface, game, hex_ms_game)
+    if game_over == True:
+        return game_over
     draw_end_zones(surface, game)
     pygame.display.flip()
     
