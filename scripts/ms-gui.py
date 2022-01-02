@@ -11,8 +11,6 @@ import sys, time, pygame
 import game_state, game_draw, game_input, game_board
 import constants
 from constants import BOARD_HEIGHT, NUM_MINES, BOARD_WIDTH
-from hex_geometry import Block, HexTileSprite
-
 
 from minesweeper import MSGame, gui
 

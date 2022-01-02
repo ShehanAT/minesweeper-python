@@ -97,12 +97,10 @@ def draw_tile(surface, game, tile_indicator, x_index, y_index):
     if tile_indicator in xrange(1, 9):
         game_tile.id = tile_indicator
         game_tile.image = pygame.image.load(game_draw.NUMBER_PATHS[tile_indicator]).convert_alpha()
-        new_image = pygame.image.load(game_draw.NUMBER_PATHS[tile_indicator]).convert_alpha()
 
     elif tile_indicator == 0:
         game_tile.id = 0
         game_tile.image = pygame.image.load(game_draw.NUMBER_PATHS[0]).convert_alpha()
-        new_image = pygame.image.load(game_draw.NUMBER_PATHS[0]).convert_alpha()
     elif tile_indicator == 12:
         game_tile.id = 12
         game_tile.image = pygame.image.load(game_draw.BOOM_PATH).convert_alpha()
@@ -116,8 +114,9 @@ def draw_tile(surface, game, tile_indicator, x_index, y_index):
         game_tile.id = 11
         game_tile.image = pygame.image.load(game_draw.EMPTY_PATH).convert_alpha()
     game_tile.image = pygame.transform.scale(game_tile.image, (30, 30))
-    game_tile.rect.x = game_tile.grid_position[0]
-    game_tile.rect.y = game_tile.grid_position[1]
+    game_tile.rect.x = game_tile.grid_position[0] - 15 
+    game_tile.rect.y = game_tile.grid_position[1] - 15
+    # game_tile.rect.center = game_tile.center_point()
 
     surface.blit(game_tile.image, game_tile.rect)  
   
@@ -167,15 +166,6 @@ def draw_board(surface, game, hex_ms_board):
         for x_index, tile_row in enumerate(hex_ms_board.get_info_map()):
             for y_index, tile in enumerate(tile_row):
                 draw_tile(surface, game, tile, x_index, y_index)
-                # pass 
-    # for tile in game.hex_tiles():
-    #     x_pos = tile.coord_position[0]
-    #     y_pos = tile.coord_position[1]
-    #     if game.info_map[(x_pos, y_pos)] == 0:
-    #         draw_hex_tile(surface, game, tile)
-  
-    # if game.solution != None:
-    #     draw_hex_path(surface, game, game.solution, (255, 255, 255))
 
 def draw_end_zones(surface, game):
     player_one_colour = game.player_colour[0]
