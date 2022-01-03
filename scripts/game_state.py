@@ -45,6 +45,8 @@ class GameState:
         self.moves = []
         self.solution = None
 
+        self.game_over = False 
+        
         self.mine_map = np.zeros((BOARD_HEIGHT, BOARD_WIDTH),
                                 dtype=np.uint8)
 

@@ -6,7 +6,7 @@ import hex_geometry
 # from hex_geometry import HexTileSprite
 PACKAGE_PATH = os.path.dirname(os.path.abspath(__file__))
 PACKAGE_IMGS_PATH = os.path.join(PACKAGE_PATH, "imgs")
-from constants import BOARD_WIDTH, BOARD_HEIGHT 
+from constants import BOARD_WIDTH, BOARD_HEIGHT, WINDOW_WIDTH, WINDOW_HEIGHT 
 import game_draw 
 
 try:
@@ -189,13 +189,31 @@ def draw_end_zones(surface, game):
         draw_hex_right_border(surface, game, tile, player_two_colour)
 
 
-def draw_frame(surface, game, hex_ms_game, number_tile=None):
-    surface.fill(game.background_colour)
-    game_over = draw_board(surface, game, hex_ms_game)
-    if game_over == True:
+def draw_frame(surface, game_state, hex_ms_game, number_tile=None):
+    surface.fill(game_state.background_colour)
+    game_over = draw_board(surface, game_state, hex_ms_game)
+    
+    if game_over == True or game_state.game_over == True:
+        show_game_over_prompt(surface)
+        draw_board(surface, game_state, hex_ms_game)
+        draw_end_zones(surface, game_state)
+        pygame.display.flip()
         return game_over
-    draw_end_zones(surface, game)
+    
+    draw_end_zones(surface, game_state)
     pygame.display.flip()
+    
+    
+def show_game_over_prompt(screen):
+    game_over_img = pygame.image.load(game_draw.GAME_OVER_IMG_PATH).convert_alpha()
+    game_over_img = pygame.transform.scale(game_over_img, (50, 50))
+
+    game_over_sprite = hex_geometry.GameLabel(game_over_img, BOARD_WIDTH/2, BOARD_WIDTH/2, 50)
+    
+    game_over_sprite.rect.x = WINDOW_WIDTH/2
+    game_over_sprite.rect.y = 10
+    
+    screen.blit(game_over_sprite.image, game_over_sprite.rect)
     
 def update_grid(gameState, hexMSGame, surface):
     info_map = hexMSGame.get_info_map()

@@ -9,7 +9,6 @@ from __future__ import print_function
 import argparse
 import sys, time, pygame
 import game_state, game_draw, game_input, game_board
-from hex_geometry import GameLabel
 import constants
 from constants import BOARD_HEIGHT, NUM_MINES, BOARD_WIDTH
 from minesweeper import MSGame, gui
@@ -38,33 +37,25 @@ def game_loop(game):
                 (20, 20)
             ))
         screen.blit(game_tile.image, game_tile.rect)  
-        show_game_over_prompt(screen)
         event_handler_result = game_input.handle_events(pygame.event.get(), game, hex_ms_board, screen)
         try:
             if event_handler_result[0] == "click_event":
                 game_over = game_draw.draw_frame(screen, game, hex_ms_board, event_handler_result[1])
                 raise ValueError
+            # if event_handler_result[0] == "game_over": 
+            #     game_over = True 
             print(game_over)
         except ValueError:
             game_over = game_draw.draw_frame(screen, game, hex_ms_board, None)
         except TypeError:
             game_over = game_draw.draw_frame(screen, game, hex_ms_board, None)
         if game_over == True:
-            show_game_over_prompt(screen)
+            # show_game_over_prompt(screen)
+            pass 
         sys.stdout.flush()
         time.sleep(0.05) # cap at 20 fps
 
-def show_game_over_prompt(screen):
-    # game_tile.image = pygame.image.load(game_draw.EMPTY_PATH).convert_alpha()
 
-
-    
-    game_over_img = pygame.image.load(game_draw.GAME_OVER_IMG_PATH).convert_alpha()
-    game_over_sprite = GameLabel(game_over_img, 20, 20, 50)
-    game_over_sprite.rect.x = 20
-    game_over_sprite.rect.y = 20
-    
-    screen.blit(game_over_sprite.image, game_over_sprite.rect)
     
 
 def ms_hex_game_main():

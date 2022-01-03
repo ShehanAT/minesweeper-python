@@ -286,12 +286,14 @@ class HexMSBoard(object):
         move_y : int
             Y position of the move
         """
+        game_over = False 
         # record the move
         if self.game_status == 2:
             self.move_history.append(self.check_move(move_type, move_x,
                                                      move_y))
         else:
             self.end_game()
+            game_over = True 
 
         # play the move, update the board
         if move_type == "click":
@@ -308,6 +310,7 @@ class HexMSBoard(object):
             self.game_status = 0  # game loses
             # self.print_board()
             self.end_game()
+            return game_over 
         elif self.board.check_board() == 1:
             self.game_status = 1  # game wins
             # self.print_board()
